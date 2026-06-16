@@ -30,6 +30,8 @@ class PrintInOrder:
             worker_thread.start()
  
 
+class TestPrintInOrder(unittest.TestCase):
+
     def test_sequential_execution(self):
         """Pass workers straight to engine via background invocations to avoid deadlocks."""
         engine = PrintInOrder()
@@ -47,13 +49,15 @@ class PrintInOrder:
         time.sleep(0.05)      
 
         engine.first(t1)      
-        call_third.join()
-        call_second.join()
         
-        t1.join()
-        t2.join()
-        t3.join()
+        call_third.join(timeout=2.0)
+        call_second.join(timeout=2.0)
+        
+        t1.join(timeout=2.0)
+        t2.join(timeout=2.0)
+        t3.join(timeout=2.0)
 
+        print(f"\n[Test Output] Order of execution: {execution_order}")
         self.assertEqual(execution_order, ["First", "Second", "Third"])
 
 if __name__ == "__main__":
