@@ -1,7 +1,5 @@
 import threading
-from typing import Callable
 import unittest
-import threading
 
 class ThreadedH2OSynthesizer:
     def __init__(self):
@@ -9,52 +7,61 @@ class ThreadedH2OSynthesizer:
         self._sem_o = threading.Semaphore(1)        
         self._barrier = threading.Barrier(3)
 
-    def hydrogen(self, release_hydrogen: Callable[[], None]) -> None:
-         with self._sem_h:
-            release_hydrogen() 
-            self._barrier.wait()
+    def hydrogen(self) -> None:
+        self._sem_h.acquire()
+        self._barrier.wait()
+        print("H", end="", flush=True)
+        self._sem_h.release()
 
-    def oxygen(self, release_oxygen: Callable[[], None]) -> None:
-        with self._sem_o:
-            release_oxygen() 
-            self._barrier.wait()
+    def oxygen(self) -> None:
+        self._sem_o.acquire()
+        self._barrier.wait()
+        print("O", end="", flush=True)
+        self._sem_o.release()
 
 
 
 class UnitTests(unittest.TestCase):
-    
+
     def test_single_molecule_synthesis(self):
         synthesizer = ThreadedH2OSynthesizer()
+
         output = []
         lock = threading.Lock()
-        
-        def release_h():
+
+        def hydrogen_worker():
+            synthesizer.hydrogen()
             with lock:
                 output.append("H")
-                
-        def release_o():
+
+        def oxygen_worker():
+            synthesizer.oxygen()
             with lock:
                 output.append("O")
 
-        h1 = threading.Thread(target=synthesizer.hydrogen, args=(release_h,))
-        h2 = threading.Thread(target=synthesizer.hydrogen, args=(release_h,))
-        o1 = threading.Thread(target=synthesizer.oxygen, args=(release_o,))
 
-        h1.start()
-        h2.start()
+        h1 = threading.Thread(target=hydrogen_worker)
+        h2 = threading.Thread(target=hydrogen_worker)
+        o1 = threading.Thread(target=oxygen_worker)
+
         o1.start()
+        h2.start()
+        h1.start()
 
-        h1.join(timeout=2.0)
-        h2.join(timeout=2.0)
-        o1.join(timeout=2.0)
+        h1.join(timeout=2)
+        h2.join(timeout=2)
+        o1.join(timeout=2)
 
-        if h1.is_alive() or h2.is_alive() or o1.is_alive():
-            self.fail("The threads deadlocked and failed to pass the barrier!")
+        self.assertFalse(h1.is_alive())
+        self.assertFalse(h2.is_alive())
+        self.assertFalse(o1.is_alive())
 
         print(f"\n[Basic Test] Resulting elements: {output}")
-        self.assertEqual(len(output), 3, "Should have exactly 3 elements")
-        self.assertEqual(output.count("H"), 2, "Should have exactly 2 Hydrogen")
-        self.assertEqual(output.count("O"), 1, "Should have exactly 1 Oxygen")
+
+        self.assertEqual(len(output), 3)
+        self.assertEqual(output.count("H"), 2)
+        self.assertEqual(output.count("O"), 1)
+
 
 if __name__ == "__main__":
     unittest.main()
