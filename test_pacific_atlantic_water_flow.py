@@ -12,7 +12,6 @@ class PacificAtlanticWaterFlow:
         
         for r in range(M):
             for c in range(N):
-                # Python uses sets or lists of lists for visited tracking
                 visited = [[False] * N for _ in range(M)]
                 final_status = self._dfs(r, c, heights, visited, M, N)
                 
