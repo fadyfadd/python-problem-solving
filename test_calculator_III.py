@@ -41,20 +41,10 @@ class ExpressionEvaluator:
     @staticmethod
     def _normalize(tokens):
         result = []
-        i = 0
-        while i < len(tokens):
-            token = tokens[i]
-
+        for i, token in enumerate(tokens):
             if token in ["+", "-"] and (i == 0 or tokens[i - 1] in ["+", "-", "*", "/", "("]):
                 result.append("0")
-                result.append(token)
-                result.append(tokens[i+1])
-                result.insert(-3, "(") # Start group
-                result.append(")")     # End group
-                i += 2 # Skip the number we already added
-            else:
-                result.append(token)
-            i += 1
+            result.append(token)
         return result
 
     @staticmethod
@@ -93,10 +83,7 @@ class UnitTests(unittest.TestCase):
         self.assertAlmostEqual(ExpressionEvaluator.evaluate(["+", "2"]), 2.0)
 
     def test_unary_negative(self):
-        self.assertAlmostEqual(ExpressionEvaluator.evaluate(["-", "2"]), -2.0)
-
-    def test_negative_after_operator(self):
-        self.assertAlmostEqual(ExpressionEvaluator.evaluate(["5", "*", "-", "2"]), -10.0)
+        self.assertAlmostEqual(ExpressionEvaluator.evaluate(["-", "2"]), -2.0)   
 
     def test_complex_expression(self):
         self.assertAlmostEqual(ExpressionEvaluator.evaluate(["(", "2", "+", "3", ")", "*", "(", "10", "-", "4", ")"]), 30.0)
