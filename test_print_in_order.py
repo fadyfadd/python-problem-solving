@@ -55,3 +55,6 @@ class PrintInOrder:
         t3.join()
 
         self.assertEqual(execution_order, ["First", "Second", "Third"])
+
+if __name__ == "__main__":
+    unittest.main()

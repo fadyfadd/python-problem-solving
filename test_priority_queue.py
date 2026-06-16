@@ -113,3 +113,6 @@ class UnitTests(unittest.TestCase):
         self.pq.enqueue("second_equal", 5)
         self.assertEqual(self.pq.dequeue(), "first_equal")
         self.assertEqual(self.pq.dequeue(), "second_equal")
+
+if __name__ == "__main__":
+    unittest.main()
