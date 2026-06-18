@@ -17,7 +17,7 @@ class ExpressionEvaluator:
                     ExpressionEvaluator._apply_operator(values, operators.pop())
                 operators.pop()  # Remove '('
             elif ExpressionEvaluator._is_operator(token):
-                while (operators and operators[-1] != "(" and
+                if (operators and operators[-1] != "(" and
                        ExpressionEvaluator._precedence(operators[-1]) >=
                        ExpressionEvaluator._precedence(token)):
                     ExpressionEvaluator._apply_operator(values, operators.pop())
