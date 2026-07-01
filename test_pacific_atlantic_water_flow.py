@@ -75,3 +75,6 @@ class UnitTests(unittest.TestCase):
         heights = [[10]]
         expected = [[0, 0]]
         self.assertEqual(self.sol.pacificAtlantic(heights), expected)
+
+if __name__ == "__main__":
+    unittest.main()   

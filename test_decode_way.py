@@ -48,3 +48,6 @@ class UnitTests(unittest.TestCase):
     def test_valid_and_invalid_zeros(self):
         """Test tricky zero placements which force specific groupings."""
         self.assertEqual(self.sol.numDecodings("10"), 1)
+
+if __name__ == "__main__":
+    unittest.main()

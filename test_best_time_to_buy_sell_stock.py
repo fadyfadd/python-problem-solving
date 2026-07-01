@@ -42,6 +42,5 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(stock.buy_sell_stock([3, 3, 3, 3]), 0)
 
 
-min_price = float('inf')
-x = min_price - 1
-print(x)
+if __name__ == "__main__":
+    unittest.main()
